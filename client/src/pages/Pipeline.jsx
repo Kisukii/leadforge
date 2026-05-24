@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 function Pipeline({ goBack })  {
   const [stages, setStages] = useState({});
   useEffect(() => {
-  fetch("http://localhost:5000/pipeline")
+  fetch("https://leadforge-x8t8.onrender.com/pipeline")
     .then((res) => res.json())
     .then((data) => setStages(data));
 }, []);
