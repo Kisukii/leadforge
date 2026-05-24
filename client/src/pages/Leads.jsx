@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 function Leads({ goBack }) {
   const [leads, setLeads] = useState([]);
   useEffect(() => {
-  fetch("http://localhost:5000/leads")
+  fetch("https://leadforge-x8t8.onrender.com/leads")
     .then((res) => res.json())
      .then((data) => {
       console.log("API DATA:", data); // 👈 important
