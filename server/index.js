@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 
@@ -76,6 +77,25 @@ app.get("/analytics", (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
+// Serve static client build if present (for production deployments)
+const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
+if (require('fs').existsSync(clientBuildPath)) {
+  app.use(express.static(clientBuildPath));
+  // Fallback to index.html for any GET request that likely targets the SPA
+  app.use((req, res, next) => {
+    if (req.method !== 'GET') return next();
+
+    // Don't interfere with API routes
+    const apiPrefixes = ['/login', '/leads', '/pipeline', '/analytics'];
+    if (apiPrefixes.some(p => req.path.startsWith(p))) return next();
+
+    // If request has a file extension, let static middleware handle it (404 if not found)
+    if (path.extname(req.path)) return next();
+
+    // Otherwise serve SPA index
+    return res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
